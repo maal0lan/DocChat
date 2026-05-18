@@ -159,7 +159,15 @@ Stores encrypted API keys provided by users.
 git clone https://github.com/avishek0679/DocChat.git
 cd DocChat
 pnpm install
-pnpm run dev
+pnpm run dev # Start the frontend development server
+
+cd backend
+pnpm install
+cp .env.example .env
+pnpm dlx prisma migrate dev --name init
+pnpm dlx prisma generate
+docker compose up -d # Optional: Start Qdrant vector DB / Redis / Ollama - locally using Docker  
+pnpm run dev # Start the backend server
 ```
 
 ---
