@@ -14,6 +14,7 @@ const memory = new MemoryClient({ apiKey: process.env.MEM0_API_KEY });
 const getAvailableModels = asyncHandler(async (req, res) => {
     const apikeys = await prisma.apiKey.findMany({
         where: { userId: req.user.id },
+        orderBy:{createdAt:"asc"}
     });
     if (!apikeys.length) {
         return res
@@ -44,6 +45,7 @@ const sendMessage = asyncHandler(async (req, res) => {
     const chat = await prisma.chat.findUnique({
         where: { id: chatId },
         include: { chatSources: true },
+        orderBy:{createdAt:"asc"}
     });
     if (!chat) {
         throw new ApiError(404, "Chat not found.");
@@ -68,6 +70,7 @@ const sendMessage = asyncHandler(async (req, res) => {
                 userId: req.user.id,
                 provider,
             },
+            orderBy: { createdAt: "asc" },
         });
         apiKeyId = apiKey.id;
 
@@ -100,6 +103,7 @@ const sendMessage = asyncHandler(async (req, res) => {
     } else {
         const docTree = await prisma.documentTree.findUnique({
             where: { id: chat.collectionName },
+            orderBy: { createdAt: "asc" },
         });
         treeindex.loadData(docTree.sourceData);
         treeindex.loadTree(docTree.treeData);
@@ -277,6 +281,7 @@ const exportChatMessages = asyncHandler(async (req, res) => {
 
     const chat = await prisma.chat.findUnique({
         where: { id: chatId },
+        orderBy: { createdAt: "asc" },
     });
 
     if (!chat || chat.userId !== req.user.id) {
@@ -286,6 +291,7 @@ const exportChatMessages = asyncHandler(async (req, res) => {
     const messages = await prisma.chatMessage.findMany({
         where: { chatId },
         orderBy: { createdAt: "asc" },
+
     });
 
     const escapeForPlainText = (text) => text || "";
@@ -341,6 +347,7 @@ const getChatMessages = asyncHandler(async (req, res) => {
 
     const chat = await prisma.chat.findUnique({
         where: { id: chatId },
+        orderBy: { createdAt: "asc" },
     });
 
     if (!chat || chat.userId !== req.user.id) {
@@ -349,6 +356,7 @@ const getChatMessages = asyncHandler(async (req, res) => {
 
     const messages = await prisma.chatMessage.findMany({
         where: { chatId },
+        orderBy: { createdAt: "asc" },
     });
 
     if (!messages.length) {
@@ -367,6 +375,7 @@ const getChatMessageSources = asyncHandler(async (req, res) => {
 
     const messageSources = await prisma.chatMessageSource.findMany({
         where: { chatMessageId: messageId },
+        orderBy: { createdAt: "asc" },
     });
 
     if (!messageSources.length) {
